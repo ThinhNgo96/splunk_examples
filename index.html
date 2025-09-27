@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nghiên cứu và ứng dụng Splunk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/theme/white.min.css">
+    <style>
+        .reveal h1,
+        .reveal h2,
+        .reveal h3 {
+            color: #2c3e50;
+            margin-top: 0.3em;
+            margin-bottom: 0.3em;
+        }
+
+        .reveal h4 {
+            margin-top: 0.2em;
+            margin-bottom: 0.2em;
+            font-size: 1.1em;
+        }
+
+        .reveal h5 {
+            margin-top: 0.15em;
+            margin-bottom: 0.15em;
+            font-size: 0.95em;
+        }
+
+        .reveal .slides {
+            height: 100vh;
+        }
+
+        .reveal .slides section {
+            padding: 30px !important;
+            box-sizing: border-box !important;
+            width: 100% !important;
+            height: 100% !important;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .reveal .slides section .center {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .highlight {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .green {
+            color: #27ae60;
+        }
+
+        .blue {
+            color: #3498db;
+        }
+
+        .orange {
+            color: #f39c12;
+        }
+
+        .small {
+            font-size: 0.7em;
+            line-height: 1.1;
+            margin: 0.05em 0;
+        }
+
+        .tiny {
+            font-size: 0.6em;
+            line-height: 1.0;
+            margin: 0.02em 0;
+        }
+
+        /* Better responsive text sizing */
+        .reveal .slides section p {
+            font-size: 0.9em;
+            line-height: 1.2;
+            margin: 0.1em 0;
+        }
+
+        .reveal .slides section ul,
+        .reveal .slides section ol {
+            font-size: 0.85em;
+            margin: 0.1em 0;
+            padding-left: 1.2em;
+        }
+
+        .reveal .slides section li {
+            margin: 0.05em 0;
+            line-height: 1.1;
+        }
+
+        /* Compact grid layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+            align-items: start;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            align-items: start;
+        }
+
+        /* Better table styling */
+        .compact-table {
+            width: 90%;
+            font-size: 0.65em;
+            border-collapse: collapse;
+            margin: 10px auto;
+        }
+
+        .compact-table th {
+            background-color: #3498db;
+            color: white;
+            padding: 6px;
+            border: 1px solid #ddd;
+            font-size: 0.9em;
+        }
+
+        .compact-table td {
+            border: 1px solid #ddd;
+            padding: 5px;
+            text-align: center;
+        }
+
+        /* Code blocks */
+        .code-block {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 0.65em;
+            margin: 10px 0;
+            border-left: 3px solid #3498db;
+        }
+
+        /* Image styling */
+        .demo-image {
+            max-width: 70%;
+            height: auto;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            margin: 5px 0;
+        }
+
+        /* Process flow styling */
+        .process-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .process-step {
+            text-align: center;
+            flex: 1;
+        }
+
+        .process-box {
+            padding: 8px 12px;
+            border-radius: 5px;
+            color: white;
+            font-size: 0.75em;
+            margin-bottom: 5px;
+        }
+
+        /* Card styling for features */
+        .feature-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 8px;
+            border-left: 4px solid #3498db;
+        }
+
+        .feature-card h5 {
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+
+        /* Statistics display */
+        .stat-number {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .stat-label {
+            font-size: 0.8em;
+            margin: 0;
+            color: #666;
+        }
+
+        /* Better spacing for nested content */
+        .reveal .slides section>* {
+            margin-top: 0.1em !important;
+            margin-bottom: 0.1em !important;
+        }
+
+        /* Override default reveal margins */
+        .reveal .slides section h1 {
+            font-size: 2.2em;
+            margin-bottom: 0.2em;
+        }
+
+        .reveal .slides section h2 {
+            font-size: 1.8em;
+            margin-bottom: 0.15em;
+        }
+
+        .reveal .slides section h3 {
+            font-size: 1.4em;
+            margin-bottom: 0.1em;
+        }
+
+        /* Specific fixes for content-heavy slides */
+        .content-dense {
+            padding: 15px !important;
+        }
+
+        .content-dense h3 {
+            font-size: 1.2em;
+            margin-bottom: 0.1em;
+        }
+
+        .content-dense p,
+        .content-dense li {
+            font-size: 0.75em;
+            line-height: 1.0;
+        }
+
+        /* Utility classes */
+        .mt-small {
+            margin-top: 10px !important;
+        }
+
+        .mb-small {
+            margin-bottom: 10px !important;
+        }
+
+        .text-compact {
+            font-size: 0.8em;
+            line-height: 1.2;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="reveal">
+        <div class="slides">
+            <!-- Title Slide -->
+            <section class="title-slide">
+                <h1>Nghiên cứu và ứng dụng Splunk</h1>
+                <h3>trong quản lý và phân tích dữ liệu doanh nghiệp</h3>
+                <div class="mt-small">
+                    <p style="font-size: 1.1em;"><strong>🏛️ Trường Đại học Công nghệ Thông tin</strong></p>
+                    <p style="font-size: 1em;">Khoa Khoa học và Kỹ thuật Thông tin</p>
+                </div>
+            </section>
+
+            <!-- Team Information -->
+            <section class="title-slide">
+                <h2>👥 Thông tin nhóm thực hiện</h2>
+                <div class="mt-small text-compact">
+                    <p><strong class="blue">👨‍🏫 Giảng viên hướng dẫn:</strong> ThS. Tạ Thu Thủy</p>
+                    <p class="mt-small"><strong class="green">👨‍🎓 Nhóm sinh viên thực hiện:</strong></p>
+                    <div class="mt-small">
+                        <p class="small">Nguyễn Văn A - 20520001</p>
+                        <p class="small">Trần Thị B - 20520002</p>
+                        <p class="small">Lê Văn C - 20520003</p>
+                    </div>
+                </div>
+                <div style="position: absolute; bottom: 30px; left: 0; right: 0;">
+                    <p class="small">📍 TP. Hồ Chí Minh, 12/2024</p>
+                </div>
+            </section>
+
+            <!-- Agenda Part 1 -->
+            <section>
+                <h2>📋 Nội dung trình bày - Phần 1</h2>
+                <div class="grid-2 mt-small">
+                    <div>
+                        <h4 class="blue">Phần I: Cơ sở lý thuyết</h4>
+                        <ol class="small">
+                            <li>Tổng quan về Splunk</li>
+                            <li>Kiến trúc và thành phần</li>
+                            <li>Phương pháp nghiên cứu</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4 class="green">Phần II: Thực nghiệm</h4>
+                        <ol start="4" class="small">
+                            <li>Thiết kế hệ thống</li>
+                            <li>Triển khai và cấu hình</li>
+                            <li>Thu thập và phân tích dữ liệu</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Agenda Part 2 -->
+            <section>
+                <h2>📋 Nội dung trình bày - Phần 2</h2>
+                <div class="grid-2 mt-small">
+                    <div>
+                        <h4 class="orange">Phần III: Đánh giá</h4>
+                        <ol start="7" class="small">
+                            <li>Kết quả thực nghiệm</li>
+                            <li>So sánh với các giải pháp khác</li>
+                            <li>Phân tích chi phí-lợi ích</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4 class="highlight">Phần IV: Kết luận</h4>
+                        <ol start="10" class="small">
+                            <li>Đánh giá tổng quan</li>
+                            <li>Khuyến nghị</li>
+                            <li>Hướng phát triển</li>
+                        </ol>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Research Methodology -->
+            <section>
+                <h2>🔬 Phương pháp nghiên cứu</h2>
+                <div class="grid-3 mt-small">
+                    <div class="feature-card">
+                        <h4 class="blue">Lý thuyết</h4>
+                        <ul class="tiny">
+                            <li>Tài liệu Splunk</li>
+                            <li>Case studies</li>
+                            <li>So sánh giải pháp</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <h4 class="green">Thực nghiệm</h4>
+                        <ul class="tiny">
+                            <li>Lab environment</li>
+                            <li>Performance test</li>
+                            <li>Demo thực tế</li>
+                        </ul>
+                    </div>
+                    <div class="feature-card">
+                        <h4 class="orange">Đánh giá</h4>
+                        <ul class="tiny">
+                            <li>Hiệu năng</li>
+                            <li>Chi phí</li>
+                            <li>Khả năng mở rộng</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chapter 1: Overview -->
+            <section>
+                <section>
+                    <h2>1. Tổng quan về Splunk</h2>
+                </section>
+
+                <section class="content-dense">
+                    <h3>1.1 Định nghĩa</h3>
+                    <p><span class="highlight">Splunk</span> là một nền tảng phần mềm mạnh mẽ được thiết kế để:</p>
+                    <div class="grid-2 mt-small">
+                        <ul class="small">
+                            <li>📊 Thu thập dữ liệu máy</li>
+                            <li>🗂️ Lập chỉ mục và lưu trữ</li>
+                        </ul>
+                        <ul class="small">
+                            <li>🔍 Tìm kiếm và phân tích</li>
+                            <li>📈 Trực quan hóa dữ liệu</li>
+                        </ul>
+                    </div>
+                    <p class="green small mt-small">Được thành lập năm 2003, trở thành công cụ hàng đầu trong quản lý dữ
+                        liệu doanh nghiệp</p>
+                </section>
+
+                <section class="content-dense">
+                    <h3>1.2 Bài toán thực tế</h3>
+                    <p class="small"><strong>Thách thức:</strong> Khối lượng dữ liệu khổng lồ từ nhiều nguồn</p>
+                    <div class="grid-2 mt-small">
+                        <div>
+                            <h4 class="blue">Nguồn dữ liệu:</h4>
+                            <ul class="tiny">
+                                <li>📱 Web & Mobile apps</li>
+                                <li>🌐 IoT devices</li>
+                                <li>📊 System metrics</li>
+                                <li>🔒 Security events</li>
+                                <li>☁️ Cloud services</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 class="orange">Yêu cầu:</h4>
+                            <ul class="tiny">
+                                <li>⚡ Xử lý real-time</li>
+                                <li>📈 Khả năng mở rộng</li>
+                                <li>🔍 Tìm kiếm nhanh</li>
+                                <li>📊 Visualization</li>
+                                <li>🚨 Alerting</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Chapter 2: Features -->
+            <section>
+                <section>
+                    <h2>2. Các đặc trưng của Splunk</h2>
+                </section>
+
+                <section class="content-dense">
+                    <h3>2.1 Đặc trưng chính</h3>
+                    <div class="grid-2 mt-small">
+                        <div class="feature-card">
+                            <h4 class="blue">⚡ Real-time Processing</h4>
+                            <p class="tiny">Thu thập và phân tích dữ liệu theo thời gian thực</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4 class="green">📄 Schema-free</h4>
+                            <p class="tiny">Xử lý dữ liệu phi cấu trúc linh hoạt</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4 class="orange">📈 High Scalability</h4>
+                            <p class="tiny">Mở rộng từ single server đến hàng nghìn nodes</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4 class="highlight">🔍 Powerful Search</h4>
+                            <p class="tiny">SPL - Search Processing Language mạnh mẽ</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>2.2 Thành phần chính</h3>
+                    <div class="process-flow mt-small">
+                        <div class="process-step">
+                            <div class="process-box" style="background-color: #f39c12;">📡 Forwarder</div>
+                            <p class="tiny">Thu thập và chuyển tiếp dữ liệu</p>
+                        </div>
+                        <div style="font-size: 1.5em;">→</div>
+                        <div class="process-step">
+                            <div class="process-box" style="background-color: #3498db;">🗄️ Indexer</div>
+                            <p class="tiny">Xử lý và lưu trữ dữ liệu thành events</p>
+                        </div>
+                        <div style="font-size: 1.5em;">→</div>
+                        <div class="process-step">
+                            <div class="process-box" style="background-color: #27ae60;">🔍 Search Head</div>
+                            <p class="tiny">Giao diện tìm kiếm và phân tích</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>2.3 Chức năng chính</h3>
+                    <ul class="small">
+                        <li><span class="blue">📊 Data Indexing:</span> Thu thập, phân tích và lưu trữ dữ liệu</li>
+                        <li><span class="green">🔍 Search & Investigation:</span> Tìm kiếm và phân tích events</li>
+                        <li><span class="orange">🚨 Monitoring & Alerting:</span> Giám sát real-time và cảnh báo</li>
+                        <li><span class="highlight">📈 Reporting & Analytics:</span> Tạo báo cáo và visualization</li>
+                        <li><span class="blue">🔒 Security (SIEM):</span> Phân tích security events</li>
+                    </ul>
+                </section>
+
+                <section class="content-dense">
+                    <h3>2.4 Search Processing Language (SPL)</h3>
+                    <h4 class="blue">Ngôn ngữ truy vấn của Splunk</h4>
+                    <div class="code-block mt-small">
+                        index=web_logs status=404 | stats count by uri | head 10
+                    </div>
+                    <div class="grid-3 mt-small">
+                        <div>
+                            <h5 class="green">🔍 Search</h5>
+                            <p class="tiny">search, where, regex</p>
+                        </div>
+                        <div>
+                            <h5 class="orange">📊 Stats</h5>
+                            <p class="tiny">stats, chart, timechart</p>
+                        </div>
+                        <div>
+                            <h5 class="highlight">📋 Report</h5>
+                            <p class="tiny">table, sort, head</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>2.5 Splunk như Database cho Big Data</h3>
+                    <div class="grid-2 mt-small">
+                        <div class="feature-card">
+                            <h4 class="blue">Đặc điểm Database</h4>
+                            <ul class="tiny">
+                                <li>Schema-free</li>
+                                <li>Time-series data</li>
+                                <li>Full-text search</li>
+                                <li>Real-time indexing</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4 class="green">Machine Learning</h4>
+                            <ul class="tiny">
+                                <li>Anomaly detection</li>
+                                <li>Predictive analytics</li>
+                                <li>Classification</li>
+                                <li>Statistical analysis</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Chapter 3: Implementation -->
+            <section>
+                <section>
+                    <h2>3. Quy trình thực hiện</h2>
+                </section>
+
+                <section class="content-dense">
+                    <h3>3.1 Quy trình triển khai</h3>
+                    <div class="grid-3 mt-small">
+                        <div class="feature-card">
+                            <h4 class="blue">🔧 Bước 1-2</h4>
+                            <p class="tiny">Chuẩn bị môi trường<br>Cài đặt Splunk</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4 class="green">📊 Bước 3-4</h4>
+                            <p class="tiny">Cấu hình Data Input<br>Tạo Index & Sourcetype</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4 class="orange">📈 Bước 5-6</h4>
+                            <p class="tiny">Phát triển Dashboard<br>Triển khai Production</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>3.2 Data Processing Pipeline</h3>
+                    <div class="process-flow mt-small">
+                        <div class="process-step">
+                            <div class="process-box" style="background: #3498db;">🔥 INPUT</div>
+                            <p class="tiny">Thu thập dữ liệu</p>
+                        </div>
+                        <div>→</div>
+                        <div class="process-step">
+                            <div class="process-box" style="background: #27ae60;">📄 PARSING</div>
+                            <p class="tiny">Phân tích cấu trúc</p>
+                        </div>
+                        <div>→</div>
+                        <div class="process-step">
+                            <div class="process-box" style="background: #f39c12;">🗄️ INDEXING</div>
+                            <p class="tiny">Lưu trữ index</p>
+                        </div>
+                        <div>→</div>
+                        <div class="process-step">
+                            <div class="process-box" style="background: #e74c3c;">🔍 SEARCH</div>
+                            <p class="tiny">Tìm kiếm truy vấn</p>
+                        </div>
+                        <div>→</div>
+                        <div class="process-step">
+                            <div class="process-box" style="background: #9b59b6;">📊 REPORT</div>
+                            <p class="tiny">Báo cáo visualization</p>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Chapter 4: Applications -->
+            <section>
+                <section>
+                    <h2>4. Ứng dụng thực tế</h2>
+                </section>
+
+                <section class="content-dense">
+                    <h3>4.1 Lĩnh vực ứng dụng</h3>
+                    <div class="grid-3 mt-small">
+                        <div class="feature-card">
+                            <h4 class="blue">🖥️ IT Operations</h4>
+                            <ul class="tiny">
+                                <li>System monitoring 24/7</li>
+                                <li>Performance tuning</li>
+                                <li>Root cause analysis</li>
+                            </ul>
+                            <p class="green tiny"><strong>Kết quả:</strong> Giảm downtime 95%</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4 class="orange">🔒 Security (SIEM)</h4>
+                            <ul class="tiny">
+                                <li>Threat detection</li>
+                                <li>Compliance reporting</li>
+                                <li>Incident response</li>
+                            </ul>
+                            <p class="green tiny"><strong>Kết quả:</strong> Giảm 80% thời gian điều tra</p>
+                        </div>
+                        <div class="feature-card">
+                            <h4 class="highlight">📊 Business Intelligence</h4>
+                            <ul class="tiny">
+                                <li>Customer analytics</li>
+                                <li>Process optimization</li>
+                                <li>Predictive analytics</li>
+                            </ul>
+                            <p class="green tiny"><strong>Kết quả:</strong> Tăng hiệu quả 40%</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>4.2 So sánh với các giải pháp khác</h3>
+                    <table class="compact-table">
+                        <thead>
+                            <tr>
+                                <th>Tiêu chí</th>
+                                <th>Splunk</th>
+                                <th>ELK Stack</th>
+                                <th>IBM QRadar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Chi phí</strong></td>
+                                <td class="highlight">Cao</td>
+                                <td class="green">Thấp (Open Source)</td>
+                                <td class="orange">Trung bình</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Giao diện</strong></td>
+                                <td class="green">Trực quan</td>
+                                <td class="orange">Cần customization</td>
+                                <td class="orange">Phức tạp</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Machine Learning</strong></td>
+                                <td class="green">Tích hợp sẵn</td>
+                                <td class="orange">Cần cài thêm</td>
+                                <td class="orange">Hạn chế</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <section class="content-dense">
+                    <h3>4.3 Demo thực tế với Docker</h3>
+                    <h4 class="blue">🐳 Thiết lập môi trường demo</h4>
+                    <div class="code-block">
+                        # Mount secure.log vào container<br>
+                        docker run -d -p 8000:8000 \<br>
+                        -v /mnt/secure.log:/var/log/secure.log \<br>
+                        -e SPLUNK_START_ARGS='--accept-license' \<br>
+                        -e SPLUNK_PASSWORD='thinh12345' \<br>
+                        splunk/splunk:latest<br><br>
+                        # Truy cập: http://localhost:8000<br>
+                        # Username: admin, Password: thinh12345
+                    </div>
+                    <div class="grid-2 mt-small">
+                        <div>
+                            <h5 class="green">📊 Cấu hình</h5>
+                            <ul class="tiny">
+                                <li>Image: splunk/splunk:latest</li>
+                                <li>Port: 8000 (Web UI)</li>
+                                <li>Log source: /mnt/secure.log</li>
+                                <li>Auto-index security events</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="orange">✅ Kết quả</h5>
+                            <ul class="tiny">
+                                <li>Container chạy ổn định</li>
+                                <li>Thu thập real-time logs</li>
+                                <li>Giao diện web hoạt động</li>
+                                <li>Ready cho security demo</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>4.4 Demo Security với /mnt/secure.log</h3>
+                    <h4 class="highlight">🔒 Kịch bản thực tế - Phân tích Security Events</h4>
+                    <div class="grid-2 mt-small">
+                        <div>
+                            <h5 class="blue">🚨 Tấn công Brute Force</h5>
+                            <div class="code-block">
+                                index=main "Failed password"<br>
+                                | stats count by src_ip, user<br>
+                                | where count > 5
+                            </div>
+                            <p class="tiny green">Phát hiện IP có nhiều lần đăng nhập thất bại</p>
+                        </div>
+                        <div>
+                            <h5 class="orange">⏰ Đăng nhập bất thường</h5>
+                            <div class="code-block">
+                                index=main "Accepted password"<br>
+                                | eval hour=strftime(_time, "%H")<br>
+                                | where hour>=2 AND hour<=6 </div>
+                                    <p class="tiny green">Phát hiện đăng nhập ngoài giờ làm việc</p>
+                            </div>
+                        </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>4.5 Demo Scenarios</h3>
+                    <h4 class="blue">🎯 Attack Scenarios to Simulate</h4>
+                    <div class="grid-2 mt-small">
+                        <div>
+                            <h5 class="green">Basic Attacks:</h5>
+                            <ul class="tiny">
+                                <li><strong>Failed SSH</strong> - Wrong passwords</li>
+                                <li><strong>Brute Force</strong> - Multiple attempts</li>
+                                <li><strong>Success Login</strong> - After failures</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="orange">Advanced Attacks:</h5>
+                            <ul class="tiny">
+                                <li><strong>Privilege Escalation</strong> - Sudo commands</li>
+                                <li><strong>Off-hours Login</strong> - 3AM access</li>
+                                <li><strong>Geographic Anomaly</strong> - Multiple IPs</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>4.6 Key Splunk Queries</h3>
+                    <h4 class="blue">🔍 Attack Detection Queries</h4>
+
+                    <h5 class="green">Failed Login Detection:</h5>
+                    <div class="code-block">
+                        index=main "Failed password" | stats count by src_ip | sort -count | head 10
+                    </div>
+
+                    <h5 class="orange">Geographic Analysis:</h5>
+                    <div class="code-block">
+                        index=main "Accepted password" | iplocation src_ip | stats count by Country
+                    </div>
+
+                    <h5 class="highlight">Privilege Escalation:</h5>
+                    <div class="code-block">
+                        index=main "sudo" | rex "sudo:\s+(?&lt;user&gt;\w+)" | stats count by user
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>4.7 Demo: Security Query</h3>
+                    <h4 class="blue">🔍 Phát hiện Brute Force Attack</h4>
+                    <img src="imgs/query.jpeg" alt="Splunk Security Query" class="demo-image">
+                    <div class="code-block mt-small">
+                        index=main "Failed password" | stats count by user | where count > 5
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>4.8 Demo: Alert Dashboard</h3>
+                    <h4 class="highlight">🚨 Real-time Monitoring</h4>
+                    <img src="imgs/alerts.jpeg" alt="Splunk Alert Dashboard" class="demo-image">
+                    <div class="grid-2 mt-small">
+                        <div>
+                            <h5 class="green">✅ Features:</h5>
+                            <ul class="tiny">
+                                <li>Real-time alerts</li>
+                                <li>Priority levels</li>
+                                <li>Auto classification</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="orange">📊 Metrics:</h5>
+                            <ul class="tiny">
+                                <li>Alert frequency</li>
+                                <li>Response time</li>
+                                <li>Threat severity</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>4.9 Demo: Email Notification</h3>
+                    <h4 class="green">📧 Automatic Email Alerts</h4>
+                    <img src="imgs/mail_alert.jpeg" alt="Email Alert Notification" class="demo-image">
+                    <div class="grid-2 mt-small">
+                        <div>
+                            <h5 class="blue">✅ Benefits:</h5>
+                            <ul class="tiny">
+                                <li>Instant alerts</li>
+                                <li>Detailed info</li>
+                                <li>ITSM integration</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h5 class="highlight">🎯 Use Cases:</h5>
+                            <ul class="tiny">
+                                <li>Brute force attacks</li>
+                                <li>System failures</li>
+                                <li>Anomaly detection</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>4.10 Demo Results Summary</h3>
+                    <h4 class="highlight">📊 Generated Data Summary</h4>
+                    <div class="grid-3 mt-small">
+                        <div>
+                            <div class="stat-number highlight">100+</div>
+                            <div class="stat-label">Failed logins</div>
+                        </div>
+                        <div>
+                            <div class="stat-number highlight">20+</div>
+                            <div class="stat-label">Suspicious users</div>
+                        </div>
+                        <div>
+                            <div class="stat-number highlight">6</div>
+                            <div class="stat-label">Geo locations</div>
+                        </div>
+                    </div>
+                    <div class="feature-card mt-small"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                        <p class="tiny"><strong>🎯 Proven:</strong> Splunk can detect, analyze and alert on security
+                            threats in real-time</p>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Chapter 5: Conclusion -->
+            <section>
+                <section>
+                    <h2>5. Kết luận</h2>
+                </section>
+
+                <section class="content-dense">
+                    <h3 style="margin-bottom: 0.2em;">5.1 Ưu điểm của Splunk</h3>
+                    <h4 class="green" style="margin-bottom: 0.3em;">✅ Điểm mạnh chính</h4>
+                    <div class="grid-2" style="align-items: start; gap: 8px; margin-top: 0.3em;">
+                        <div style="padding: 0 5px;">
+                            <ul class="small" style="margin: 0; padding-left: 1.2em;">
+                                <li style="margin: 0.1em 0;">🚀 <strong>Xử lý dữ liệu mạnh mẽ</strong></li>
+                                <li style="margin: 0.1em 0;">🔧 <strong>Giao diện trực quan</strong></li>
+                                <li style="margin: 0.1em 0;">🔍 <strong>SPL mạnh mẽ</strong></li>
+                            </ul>
+                        </div>
+                        <div style="padding: 0 5px;">
+                            <ul class="small" style="margin: 0; padding-left: 1.2em;">
+                                <li style="margin: 0.1em 0;">📈 <strong>Scalability xuất sắc</strong></li>
+                                <li style="margin: 0.1em 0;">🤖 <strong>Machine Learning tích hợp</strong></li>
+                                <li style="margin: 0.1em 0;">🌐 <strong>Ecosystem phong phú</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3 style="margin-bottom: 0.2em;">5.2 Nhược điểm của Splunk</h3>
+                    <h4 class="highlight" style="margin-bottom: 0.3em;">⚠ Thách thức cần lưu ý</h4>
+                    <div class="grid-2" style="align-items: start; gap: 8px; margin-top: 0.3em;">
+                        <div style="padding: 0 5px;">
+                            <ul class="small" style="margin: 0; padding-left: 1.2em;">
+                                <li style="margin: 0.1em 0;">💰 <strong>Chi phí cao</strong></li>
+                                <li style="margin: 0.1em 0;">⚙️ <strong>Phức tạp triển khai</strong></li>
+                                <li style="margin: 0.1em 0;">🔧 <strong>Tiêu thụ tài nguyên</strong></li>
+                            </ul>
+                        </div>
+                        <div style="padding: 0 5px;">
+                            <ul class="small" style="margin: 0; padding-left: 1.2em;">
+                                <li style="margin: 0.1em 0;">📚 <strong>Đòi hỏi training</strong></li>
+                                <li style="margin: 0.1em 0;">🔒 <strong>Vendor lock-in</strong></li>
+                                <li style="margin: 0.1em 0;">⚡ <strong>Cần tối ưu performance</strong></li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>5.3 Hướng phát triển</h3>
+                    <div class="grid-3 mt-small">
+                        <div class="feature-card">
+                            <h4 class="blue">☁️ Cloud Strategy</h4>
+                            <ul class="tiny">
+                                <li>Cloud-native architecture</li>
+                                <li>Multi-cloud integration</li>
+                                <li>Auto-scaling</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4 class="orange">🤖 AI/ML Enhancement</h4>
+                            <ul class="tiny">
+                                <li>Auto anomaly detection</li>
+                                <li>Predictive analytics</li>
+                                <li>Natural language queries</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card">
+                            <h4 class="green">📱 Modern UX</h4>
+                            <ul class="tiny">
+                                <li>Mobile applications</li>
+                                <li>Modern interface</li>
+                                <li>Real-time collaboration</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>5.4 Khuyến nghị</h3>
+                    <div class="grid-2 mt-small">
+                        <div class="feature-card" style="border-left-color: #27ae60;">
+                            <h4 class="blue">🎯 Splunk phù hợp khi:</h4>
+                            <ul class="tiny">
+                                <li>✅ Doanh nghiệp lớn</li>
+                                <li>✅ Yêu cầu security cao</li>
+                                <li>✅ Dữ liệu phức tạp</li>
+                                <li>✅ Cần hỗ trợ 24/7</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card" style="border-left-color: #f39c12;">
+                            <h4 class="orange">⚠️ Cần cân nhắc khi:</h4>
+                            <ul class="tiny">
+                                <li>⚠ Ngân sách hạn chế</li>
+                                <li>⚠ Doanh nghiệp nhỏ</li>
+                                <li>⚠ Yêu cầu đơn giản</li>
+                                <li>⚠ Cần customization cao</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="content-dense">
+                    <h3>5.5 Kết luận</h3>
+                    <div class="feature-card mt-small"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+                        <h4>🎯 Splunk: Database mạnh mẽ cho Big Data</h4>
+                        <p class="small">Giải pháp toàn diện cho quản lý và phân tích dữ liệu doanh nghiệp</p>
+                    </div>
+
+                    <div class="grid-2 mt-small">
+                        <div class="feature-card" style="background: #e8f5e8;">
+                            <h5 class="green">✅ Ưu điểm</h5>
+                            <ul class="tiny">
+                                <li>Hiệu năng cao</li>
+                                <li>Mở rộng linh hoạt</li>
+                                <li>Machine learning</li>
+                                <li>Ecosystem phong phú</li>
+                            </ul>
+                        </div>
+                        <div class="feature-card" style="background: #fff3cd;">
+                            <h5 class="orange">⚠️ Thách thức</h5>
+                            <ul class="tiny">
+                                <li>Chi phí cao</li>
+                                <li>Độ phức tạp</li>
+                                <li>Yêu cầu kỹ năng</li>
+                                <li>Vendor lock-in</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+            </section>
+
+            <!-- Thank you -->
+            <section class="title-slide">
+                <h1>Cảm ơn!</h1>
+                <h3>Questions & Answers</h3>
+                <div class="mt-small">
+                    <p class="small">
+                        <strong>Liên hệ:</strong><br>
+                        📧 student@uit.edu.vn<br>
+                        🌐 GitHub Repository<br>
+                        📱 Demo & Source Code
+                    </p>
+                </div>
+                <p class="highlight mt-small">Splunk: Biến dữ liệu thành thông tin có giá trị!</p>
+            </section>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.3.1/reveal.min.js"></script>
+    <script>
+        Reveal.initialize({
+            hash: true,
+            transition: 'slide',
+            transitionSpeed: 'default',
+            backgroundTransition: 'fade',
+            controls: true,
+            progress: true,
+            center: true,
+            touch: true,
+            loop: false,
+            rtl: false,
+            fragments: true,
+            embedded: false,
+            help: true,
+            showNotes: false,
+            autoSlide: 0,
+            autoSlideStoppable: true,
+            mouseWheel: false,
+            hideAddressBar: true,
+            previewLinks: false,
+            viewDistance: 3,
+            parallaxBackgroundImage: '',
+            parallaxBackgroundSize: '',
+            parallaxBackgroundHorizontal: null,
+            parallaxBackgroundVertical: null
+        });
+    </script>
+</body>
+
+</html>
