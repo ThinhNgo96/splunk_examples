@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   splunk:
     image: splunk/splunk:latest
